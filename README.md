@@ -22,8 +22,15 @@ The AI Context Tree is a web application that allows users to navigate concepts 
 * CSS
 
 ## Screenshots
-
 ![Home Screen](app/screenshots/con1.png)
+![Home Screen](app/screenshots/con2.png)
+![Home Screen](app/screenshots/con5.png)
+![Home Screen](app/screenshots/con7.png)
+![Home Screen](app/screenshots/con8.png)
+![Home Screen](app/screenshots/con9.png)
+![Home Screen](app/screenshots/con10.png)
+![Home Screen](app/screenshots/con11.png)
+
 
 ## Run Locally
 
