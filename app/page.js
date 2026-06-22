@@ -13,100 +13,143 @@ import "reactflow/dist/style.css";
 // ─── Node Component ────────────────────────────────────────────────────────────
 
 const ContextNode = ({ data, selected }) => {
+  const [expanded, setExpanded] = useState(false);
   const isHubMode = data.mode === "hub";
-  const size = isHubMode ? 180 : 340;
-  const padding = isHubMode ? "20px" : "45px";
+  const size = isHubMode ? 180 : 260;
+
+  if (expanded) {
+    return (
+      <div
+        style={{
+          width: "380px",
+          minHeight: "260px",
+          maxHeight: "500px",
+          borderRadius: "20px",
+          background: "#ffffff",
+          border: `6px solid #0070f3`,
+          boxShadow: "0 25px 70px rgba(0,112,243,0.35)",
+          padding: "30px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          position: "relative",
+          overflow: "hidden"
+        }}
+      >
+        <Handle type="target" position={Position.Top} style={{ visibility: "hidden" }} />
+
+        {/* Close button */}
+        <div
+          onClick={() => setExpanded(false)}
+          style={{
+            position: "absolute",
+            top: "14px",
+            right: "18px",
+            cursor: "pointer",
+            fontSize: "18px",
+            color: "#999",
+            fontWeight: "bold",
+            lineHeight: 1
+          }}
+        >
+          ✕
+        </div>
+
+        {/* Question heading */}
+        {data.question && (
+          <div style={{ fontSize: "14px", fontWeight: "800", color: "#0050cc", lineHeight: 1.4, paddingRight: "24px" }}>
+            {data.question}
+          </div>
+        )}
+
+        {/* Divider */}
+        <div style={{ width: "100%", height: "1px", background: "#eee" }} />
+
+        {/* Full answer */}
+        <div
+          style={{
+            fontSize: "13px",
+            color: "#222",
+            lineHeight: 1.7,
+            overflowY: "auto",
+            maxHeight: "340px",
+            paddingRight: "4px"
+          }}
+        >
+          {data.answer || data.label}
+        </div>
+
+        <Handle type="source" position={Position.Bottom} style={{ visibility: "hidden" }} />
+      </div>
+    );
+  }
 
   return (
     <div
+      onClick={() => { if (!data.loading) setExpanded(true); }}
       style={{
         width: `${size}px`,
         height: `${size}px`,
         borderRadius: "50%",
         background: data.loading ? "#0a0a1a" : "#ffffff",
         color: data.loading ? "#4488ff" : "#000",
-        border: `6px solid ${selected ? "#0070f3" : data.loading ? "#0030aa" : "#333"}`,
+        border: `6px solid ${selected ? "#0070f3" : data.loading ? "#0030aa" : data.answer ? "#0070f3" : "#333"}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding,
+        padding: isHubMode ? "20px" : "45px",
         textAlign: "center",
         boxShadow: selected
-          ? "0 25px 70px rgba(0,112,243,0.45)"
+          ? "0 0 25px rgba(0,112,243,0.35)"
           : data.loading
           ? "0 10px 40px rgba(0,80,255,0.3)"
+          : data.answer
+          ? "0 0 20px rgba(0,112,243,0.4)"
           : "0 10px 30px rgba(0,0,0,0.5)",
         fontSize: isHubMode ? "11px" : "13px",
-        fontWeight: isHubMode ? "800" : "500",
+        fontWeight: "800",
         transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
         position: "relative",
         flexDirection: "column",
-        gap: "8px",
+        cursor: data.loading ? "default" : "pointer",
         overflow: "hidden"
       }}
     >
       <Handle type="target" position={Position.Top} style={{ visibility: "hidden" }} />
 
       {data.loading ? (
-        <div style={{ fontSize: isHubMode ? "11px" : "14px", color: "#4488ff", fontWeight: "700" }}>
+        <div style={{ fontSize: "13px", color: "#4488ff", fontWeight: "700" }}>
           thinking...
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
-          {/* Question */}
-          {data.question && (
-            <div
-              style={{
-                fontSize: isHubMode ? "10px" : "12px",
-                fontWeight: "700",
-                color: "#0050cc",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: isHubMode ? 2 : 3,
-                WebkitBoxOrient: "vertical",
-                lineHeight: 1.3
-              }}
-            >
-              {data.question}
-            </div>
-          )}
-
-          {/* Divider — only in spotlight when both exist */}
-          {!isHubMode && data.question && data.answer && (
-            <div style={{ width: "40px", height: "1px", background: "#ccc", margin: "2px auto" }} />
-          )}
-
-          {/* Answer */}
-          <div
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              display: "-webkit-box",
-              WebkitLineClamp: isHubMode ? 4 : 8,
-              WebkitBoxOrient: "vertical",
-              lineHeight: 1.5,
-              fontSize: isHubMode ? "10px" : "13px"
-            }}
-          >
-            {data.answer || data.label}
-          </div>
+        <div
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 4,
+            WebkitBoxOrient: "vertical",
+            lineHeight: 1.4,
+            color: "#0050cc"
+          }}
+        >
+          {data.question || data.label}
         </div>
       )}
 
-      {data.hasChildren && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "10px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: isHubMode ? "16px" : "24px",
-            color: data.loading ? "#4488ff" : "#000",
-            pointerEvents: "none"
-          }}
-        >
-          ⌄
+      {data.answer && (
+        <div style={{
+          position: "absolute",
+          bottom: "18px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontSize: "9px",
+          color: "#0070f3",
+          fontWeight: "700",
+          letterSpacing: "0.05em",
+          whiteSpace: "nowrap"
+        }}>
+          tap to read
         </div>
       )}
 
@@ -115,10 +158,9 @@ const ContextNode = ({ data, selected }) => {
   );
 };
 
-// ─── Claude API ────────────────────────────────────────────────────────────────
+// ─── Grok API ────────────────────────────────────────────────────────────────
 
-async function callClaude(ancestorChain, currentQuestion) {
-  // Build messages: each ancestor is a user turn + assistant turn
+async function callGroq(ancestorChain, currentQuestion) {
   const messages = [];
 
   for (const node of ancestorChain) {
@@ -126,28 +168,24 @@ async function callClaude(ancestorChain, currentQuestion) {
     messages.push({ role: "assistant", content: node.answer });
   }
 
-  // The current question is the final user turn
   messages.push({ role: "user", content: currentQuestion });
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1000,
-      system:
+      messages,
+      systemPrompt:
         "You are an intelligent memory system embedded in a visual context tree. " +
         "Each node in the tree represents a branch of thought. " +
         "You have full context of the conversation branch — every ancestor node is part of this thread. " +
         "Respond concisely and thoughtfully. Prefer insight over length. " +
-        "You are not a chatbot. You are a thinking partner inside a branching mind map.",
-      messages
+        "You are not a chatbot. You are a thinking partner inside a branching mind map."
     })
   });
 
   const data = await response.json();
-  const text = data.content?.map((b) => b.text || "").join("") || "No response.";
-  return text;
+  return data.choices?.[0]?.message?.content || "No response.";
 }
 
 // ─── Tree Engine ───────────────────────────────────────────────────────────────
@@ -304,7 +342,7 @@ function TreeEngine() {
 
     // 3. Call Claude
     try {
-      const answer = await callClaude(ancestors, currentQuestion);
+      const answer = await callGroq(ancestors, currentQuestion);
 
       // 4. Update node with response
       setHistory((prev) =>
@@ -360,6 +398,7 @@ function TreeEngine() {
           nodesDraggable={false}
           zoomOnScroll={false}
           panOnDrag={displayNodes.length > 1}
+          proOptions={{ hideAttribution: true }}
         >
           <Background color="#111" gap={40} variant="dots" />
         </ReactFlow>
@@ -476,7 +515,7 @@ function TreeEngine() {
 
         <div style={{ flexGrow: 1 }}>
           <textarea
-            placeholder="Branch this thought further... (⌘+Enter to send)"
+            placeholder="Branch this thought further..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={handleKeyDown}

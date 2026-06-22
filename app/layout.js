@@ -22,6 +22,21 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Inject a raw, un-skippable style tag directly into the document head */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          next-route-announcer,
+          nextjs-portal,
+          [style*="z-index: 9999"],
+          [style*="z-index:9999"],
+          html > div[style*="position: fixed"] {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+          }
+        `}} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

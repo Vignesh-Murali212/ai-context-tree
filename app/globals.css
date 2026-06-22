@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Instantly hide the Next.js development badge overlay */
+next-route-announcer, 
+#__next-build-watcher, 
+[data-nextjs-scroll-focus-boundary],
+[style*="position: fixed"][style*="z-index: 9999"],
+[style*="z-index:9999"] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
